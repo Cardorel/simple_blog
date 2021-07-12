@@ -24,6 +24,7 @@ export const GoToPost = styled.a
     margin-left: 5px;
     text-decoration: none;
     color: blue;
+    cursor: pointer;
 `
 
 export const PostContent = styled.div
