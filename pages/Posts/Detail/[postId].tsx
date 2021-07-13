@@ -1,34 +1,33 @@
 import React, { useEffect } from 'react'
-import {useRouter} from 'next/router';
-import { connect } from 'react-redux';
 import { currentpostAction } from '../../../features/redux/post/actions';
 import CurrentPost from '../../../components/postDetail';
 import Comment from '../../../components/comments/comments';
 import { fetchData } from '../../../features/app/api';
+import { useRouter } from 'next/router';
+import { connect } from 'react-redux';
 
 
 
 
 
 
-function PostDetail({post ,  currentPostDispatch} : any) {
+function PostDetail({currentPost ,  currentPostDispatch} : any) {
     const router = useRouter();
     const { query = {} } = router || {};
     const { postId = 0 } = query || {};
- 
     useEffect(() => {
         const getCurrentPostAsync = async () => {
            const res = postId && await fetchData("posts/" + postId + "?_embed=comments");
            postId && currentPostDispatch(res)
         }
         getCurrentPostAsync();
-    }, [currentPostDispatch , postId , post , fetchData]);
+    }, [currentPostDispatch , postId , currentPost , fetchData]);
 
    
     return (
         <div>
-            <CurrentPost Post={post} />
-            <Comment Post={post}/>
+            <CurrentPost Post={currentPost} />
+            <Comment Post={currentPost} />
         </div>
     )
 }
@@ -49,17 +48,15 @@ export async function getStaticPaths (){
     }
 }
 
-export async function getStaticProps (){
-    const posts = await fetchData("posts");
+ export async function getStaticProps (ctx : any){
+    const postId = ctx.params.postId;   
+    const post = await fetchData("posts/" + postId + "?_embed=comments");
     return{
         props:{
-            posts
+            post
         }
     }
 }
-
-
-
 const mapDispatchToProps = (dispatch : any) => {
     return {
         currentPostDispatch: (id : number) => {
@@ -70,7 +67,7 @@ const mapDispatchToProps = (dispatch : any) => {
 
 const mapStateToProps = (state : any) => {
     return {
-        post: state.currentPost
+        currentPost: state.currentPost
     }
 }
 

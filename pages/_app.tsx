@@ -19,6 +19,7 @@ body {
 }
 `;
 
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
@@ -38,8 +39,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     </>
   );
 }
-
 const makeStore = () => store;
 export const wrapper = createWrapper(makeStore);
-
 export default wrapper.withRedux(MyApp);

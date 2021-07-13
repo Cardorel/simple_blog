@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { fetchData } from "../../../features/app/api";
 import { useAppDispatch } from "../../../features/app/hooks";
 import { createCommentAction } from "../../../features/redux/comment/actions";
+import { currentPostType } from "../../../features/redux/post/reducers/currentPost";
 import { CurrentPostType } from "../../postDetail";
 import { CommentContainerStyle, CommentHeader } from "../../postDetail/detail-styled-components";
 import {CommentContainers } from "./CommentContainer";
 import CommentForm from "./CommentForm";
 
 
+interface CommentPropType{
+  Post : currentPostType;
+}
 
 
-
-
-
-export default function Comment({ Post }: CurrentPostType) {
+export default function Comment({ Post}: CommentPropType) {
   const [commentValue, setCommentValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const dispatch = useAppDispatch();
@@ -21,9 +23,10 @@ export default function Comment({ Post }: CurrentPostType) {
     post: { comments, id },
   } = Post;
 
+
   const isCommentEmpty = comments.length < 1 ? true : false;
 
-  const handleSubmitComment = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitComment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (commentValue.trim() !== "") {
       dispatch(
@@ -32,6 +35,7 @@ export default function Comment({ Post }: CurrentPostType) {
           body: commentValue,
         })
       );
+
       setCommentValue("");
       setErrorMessage("");
     } else {
